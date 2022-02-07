@@ -1,0 +1,132 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# SOURCEScrubber
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of SOURCEScrubber is to prepares configuration files for processing SOURCE files with Datavant Scrubber.
+
+Required input includes
+
+* original configuration directory from Datavant,
+* customized list of names for blacklist, and
+* locations of the Scrubber tool and input/output directories.
+
+It optionally runs Scrubber (in addition to creating the command line).
+
+## Installation
+
+You can install the development version of SOURCEScrubber from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("chrisandrewsphd/SOURCEScrubber")
+```
+
+## Example
+
+1. Download Scrubber from Datavant and install
+2. Download and install R (https://cran.r-project.org/) and RStudio (https://www.rstudio.com/)
+3. Double click on .Rproj icon to launch RStudio (e.g., Deployment_v0.3.Rproj)
+
+Not yet available:
+
+4. In RStudio, open "./RCode/test call - one file.R" or ("./RCode/test call - all files.R")
+5. Edit 'scrub' function call to contain the correct directories (see below)
+6. Run the script.
+
+The REQUIRED arguments to the function 'scrub' are
+
+a. dirtoscrub:
+The (input) directory containing the files to be scrubbed. For example,
+dirtoscrub = "M:/EPIC-Ophthalmology/Scrubber/ToScrub"
+
+b. scrubbeddir:
+The (output) directory to write the scrubbed files. For example,
+scrubbeddir = "M:/EPIC-Ophthalmology/Scrubber/Scrubbed"
+
+c. namesforblacklist:
+The file containing names, cities, and counties created when EHR data were extracted. For example,
+namesforblacklist = "M:/EPIC-Ophthalmology/Scrubber/PHI_scrubber_processing.csv"
+
+d. toollocation:
+The directory containing the scrubbing tool downloaded from Datavant. For example,
+toollocation = "M:/EPIC-Ophthalmology/Scrubber/Tool/UniversityOfMichigan_PHIRemoval-1.1.3.8385bcb"
+
+The OPTIONAL arguments to the function 'scrub' are
+
+e. originalconfigdir:
+The directory of configuration files that arrived with Scrubber. A sensible default is guessed but might not be correct for implementations outside UM. For example,
+originalconfigdir = "M:/EPIC-Ophthalmology/Scrubber/Tool/UniversityOfMichigan_PHIRemoval-1.1.3.8385bcb/UOMPHIRemoval"
+
+f. workfolder:
+By default, temporary intermediate files will be created, used, and destroyed.  If you would like to keep them for error checking or record keeping, then provide a place for them. For example,
+workfolder = "./configs_work"
+
+g. verbose:
+Larger values of verbose result in more information printed in R during execution.  The default is 0. Other options are 1, 2, and 3. For example,
+verbose = 1
+
+h. runscrubber:
+By default, the function 'scrub' creates the necessary configuration files and command string and then executes the command. You can change the default value (TRUE) to FALSE if you just want to create the framework but not actually scrub the data. For example,
+runscrubber = FALSE
+
+i. sh_or_bat:
+The scrubber has two versions "phiremoval.bat" and "phiremoval.sh".   The first is for Windows; the second is for Mac/UNIX.  The default is sh_or_bat = "bat".  If you need the other version add this argument to the function call:
+sh_or_bat = "sh"
+
+j. listofcolumnnamestoscrub:
+By default, the function 'scrub' will scrub 21 columns in 14 files expected in the UM deployment of SOURCE. You can change the files and columns scrubbed. Put the base of the filename on the left and the variables names on the right. For example,
+
+* listofcolumnnamestoscrub = list(oph_enc_exam_text = c("SMRTDTA_ELEM_VALUE"))
+
+* listofcolumnnamestoscrub = list(
+  oph_order_text = c("ORDER_COMMENT", "NARRATIVE"),
+  oph_enc_problem_list_text = c("PROBLEM_CMT"))
+
+* listofcolumnnamestoscrub = list(
+  oph_surgery_text = c("OP_NOTE", "BRIEF_OP_NOTE"))
+
+The default value, which you don't need to provide if you want to scrub everything, is
+
+* listofcolumnnamestoscrub = list(
+  oph_order_text = c("ORDER_COMMENT", "NARRATIVE"),
+  oph_surgery_text = c("OP_NOTE", "BRIEF_OP_NOTE"),
+  oph_enc_problem_list_text = c("PROBLEM_CMT"),
+  oph_enc_hpi_text = c("HPI_COMMENT"),
+  oph_enc_visit_summary_text = c("HPI", "TECH_COMMENT", "PAT_OCULAR_HISTORY"),
+  oph_lab_text = c("LINE_COMMENT", "RESULTS_COMP_CMT", "RESULTS_CMT"),
+  oph_enc_visit_text = c("PROGRESS_NOTE"),
+  oph_rad_text = c("APPT_NOTE", "TEXT"),
+  oph_family_hx_text = c("COMMENTS", "FAM_STAT_NAME"),
+  oph_enc_exam_text = c("SMRTDTA_ELEM_VALUE"),
+  oph_lab_order_text = c("SPECIMEN_COMMENTS"),
+  oph_med_text = c("INSTRUCTION"),
+  OPH_SURGERY_all_text = c("PRE_OP_DIAG"),
+  oph_surgery_procedure_text = c("COMMENTS"))
+
+
+```{r example}
+library(SOURCEScrubber)
+## basic example code
+## Not Run
+## scrub(dirtoscrub = "./toscrub",
+## scrubbeddir = "./scrubbed",
+## namesforblacklist = "./black.csv",
+## toollocation = "./tool",
+## verbose = 3)
+```
