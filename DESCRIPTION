@@ -1,0 +1,13 @@
+Package: SOURCEScrubber
+Title: Prepares configuration files for processing SOURCE files with Datavant Scrubber
+Version: 0.3
+Authors@R: 
+    person("Chris", "Andrews", , "chrisaa@umich.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-5130-6374"))
+Description: Prepares configuration files for processing SOURCE files with Datavant Scrubber. Input includes original configuration directory from Datavant, customized list of names for blacklist, and locations of the Scrubber tool and input/output directories.  Optionally runs Scrubber.
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+License: MIT + file LICENSE
+Imports: 
+    utils
