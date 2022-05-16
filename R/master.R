@@ -1,6 +1,7 @@
 # R code to generate files and commands needed to scrub files for SOURCE
 # Chris Andrews
-# 2021-09-04
+# 2022-01-28
+
 
 #' Title
 #'
@@ -12,6 +13,7 @@
 #' @param originalconfigdir (optional) location of original configuration direcotry provided by Datavant
 #' @param runscrubber Run scrubber after configuration? FALSE by default.
 #' @param verbose Amount of output provided to console. 0 (default) for none.  Higher values may provide more.
+#' @param sh_or_bat Choose appropriate script for operating system.  "bat" (default) for Windows. "sh" for Unix-like.
 #' @param listofcolumnnamestoscrub which columns in which files to scrub? This argument is a list. Each component is a vector of column names.  The component names are the unique parts of the file names of the files to scrub.  Default value is to include 21 variables from 14 files.
 #'
 #' @return invisible NULL
@@ -33,6 +35,7 @@ scrub <- function(
   originalconfigdir = sprintf("%s/UOMPHIRemoval", toollocation),
   runscrubber = FALSE, # Execute system call? or just return scrubber call?
   verbose = 0,
+  sh_or_bat = "bat",
   listofcolumnnamestoscrub =
     list(
       oph_order_text = c("ORDER_COMMENT", "NARRATIVE"),
@@ -53,6 +56,8 @@ scrub <- function(
 
 ) {
 
+  sh_or_bat <- match.arg(sh_or_bat, choices = c("sh", "bat"))
+  
   if (is.null(workfolder)) workfolder <- tempdir()
 
   ##########################
@@ -573,9 +578,10 @@ scrub <- function(
       quote = FALSE)
 
     # command string
-    listofcommands[[f]] <-
-      sprintf('"%s/phiremoval.bat" --template "%s" --primaryInputPath "%s" --secondaryInputPath "%s" --outputPath "%s" --logFile "%s.txt"',
+    listofcommands[[f]] <- 
+      sprintf('"%s/phiremoval.%s" --template "%s" --primaryInputPath "%s" --secondaryInputPath "%s" --outputPath "%s" --logFile "%s.txt"',
               toollocation, # command location
+              sh_or_bat, # shell or bat version of scrubber
               specificconfigdir, # template directory
               sprintf("%s/%s.csv", dirtoscrub, filenames[f]), # location of file to scrub (primaryInputPath)
               secondaryInputFile, # location of patient information (secondaryInputPath)

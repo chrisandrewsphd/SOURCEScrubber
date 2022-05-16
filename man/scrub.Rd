@@ -13,6 +13,7 @@ scrub(
   originalconfigdir = sprintf("\%s/UOMPHIRemoval", toollocation),
   runscrubber = FALSE,
   verbose = 0,
+  sh_or_bat = "bat",
   listofcolumnnamestoscrub = list(oph_order_text = c("ORDER_COMMENT", "NARRATIVE"),
     oph_surgery_text = c("OP_NOTE", "BRIEF_OP_NOTE"), oph_enc_problem_list_text =
     c("PROBLEM_CMT"), oph_enc_hpi_text = c("HPI_COMMENT"), oph_enc_visit_summary_text =
@@ -40,6 +41,8 @@ scrub(
 \item{runscrubber}{Run scrubber after configuration? FALSE by default.}
 
 \item{verbose}{Amount of output provided to console. 0 (default) for none.  Higher values may provide more.}
+
+\item{sh_or_bat}{Choose appropriate script for operating system.  "bat" (default) for Windows. "sh" for Unix-like.}
 
 \item{listofcolumnnamestoscrub}{which columns in which files to scrub? This argument is a list. Each component is a vector of column names.  The component names are the unique parts of the file names of the files to scrub.  Default value is to include 21 variables from 14 files.}
 }
