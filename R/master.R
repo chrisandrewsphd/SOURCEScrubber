@@ -3,20 +3,20 @@
 # 2022-01-28
 
 
-#' Title
+#' Create configuration files for and possibly run the Datavant scrubber to scrub free text from select columns of SOURCE files
 #'
-#' @param dirtoscrub path to files to scrub.
-#' @param scrubbeddir directory to write scrubbed files
-#' @param workfolder (optional) file specific configurations stored here: temporary directory will be used if none specified.
-#' @param namesforblacklist full path to custom file of blacklist values
-#' @param toollocation location of scrubber tool
-#' @param originalconfigdir (optional) location of original configuration direcotry provided by Datavant
-#' @param runscrubber Run scrubber after configuration? FALSE by default.
+#' @param dirtoscrub location/folder/directory of files to scrub.
+#' @param scrubbeddir location/folder/directory to write scrubbed files.
+#' @param workfolder (optional) configuration files used by scrubber will be written here. A temporary directory will be created and used if none is specified.
+#' @param namesforblacklist full path and file name of custom file containing blacklist values.  This csv file should have five columns: PAT_FIRST_NAME, PAT_MIDDLE_NAME, PAT_LAST_NAME, CITY, and COUNTY.
+#' @param toollocation location of scrubber tool. Use the entire path but not the program name ("phiremoval").
+#' @param originalconfigdir (optional) location of original configuration directory provided by Datavant.  Not needed if it is in the subdirectory as originally provided.
+#' @param runscrubber Should this function invoke scrubber after creating configuration files? FALSE by default, in which case the configuration files are created and the scrubber command lines are written to another file.
 #' @param verbose Amount of output provided to console. 0 (default) for none.  Higher values may provide more.
 #' @param sh_or_bat Choose appropriate script for operating system.  "bat" (default) for Windows. "sh" for Unix-like.
 #' @param listofcolumnnamestoscrub which columns in which files to scrub? This argument is a list. Each component is a vector of column names.  The component names are the unique parts of the file names of the files to scrub.  Default value is to include 21 variables from 14 files.
 #'
-#' @return invisible NULL
+#' @return invisible NULL. But several files are created as a side effect and possibly the scrubber is run.
 #' @export
 #'
 #' @examples ## Not Run
@@ -25,7 +25,9 @@
 #' ## namesforblacklist = "./black.csv",
 #' ## toollocation = "./tool",
 #' ## verbose = 3,
-#' ## listofcolumnsnamestoscrub = list())
+#' ## listofcolumnsnamestoscrub = list(
+#' ##   oph_lab_text = c("LINE_COMMENT", "RESULTS_COMP_CMT", "RESULTS_CMT"),
+#' ##   oph_surgery_text = c("OP_NOTE", "BRIEF_OP_NOTE")))
 scrub <- function(
   dirtoscrub, # path to files to scrub.
   scrubbeddir, # directory to write scrubbed files

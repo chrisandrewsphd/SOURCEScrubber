@@ -2,7 +2,7 @@
 % Please edit documentation in R/master.R
 \name{scrub}
 \alias{scrub}
-\title{Title}
+\title{Create configuration files for and possibly run the Datavant scrubber to scrub free text from select columns of SOURCE files}
 \usage{
 scrub(
   dirtoscrub,
@@ -20,25 +20,26 @@ scrub(
     c("HPI", "TECH_COMMENT", "PAT_OCULAR_HISTORY"), oph_lab_text = c("LINE_COMMENT",
     "RESULTS_COMP_CMT", "RESULTS_CMT"), oph_enc_visit_text = c("PROGRESS_NOTE"),
     oph_rad_text = c("APPT_NOTE", "TEXT"), oph_family_hx_text = c("COMMENTS",
-    "FAM_STAT_NAME"), oph_enc_exam_text = c("SMRTDTA_ELEM_VALUE"),     
+    "FAM_STAT_NAME"), oph_enc_exam_text = c("SMRTDTA_ELEM_VALUE"), 
+    
     oph_lab_order_text = c("SPECIMEN_COMMENTS"), oph_med_text = c("INSTRUCTION"),
     OPH_SURGERY_all_text = c("PRE_OP_DIAG"), oph_surgery_procedure_text = c("COMMENTS"))
 )
 }
 \arguments{
-\item{dirtoscrub}{path to files to scrub.}
+\item{dirtoscrub}{location/folder/directory of files to scrub.}
 
-\item{scrubbeddir}{directory to write scrubbed files}
+\item{scrubbeddir}{location/folder/directory to write scrubbed files.}
 
-\item{workfolder}{(optional) file specific configurations stored here: temporary directory will be used if none specified.}
+\item{workfolder}{(optional) configuration files used by scrubber will be written here. A temporary directory will be created and used if none is specified.}
 
-\item{namesforblacklist}{full path to custom file of blacklist values}
+\item{namesforblacklist}{full path and file name of custom file containing blacklist values.  This csv file should have five columns: PAT_FIRST_NAME, PAT_MIDDLE_NAME, PAT_LAST_NAME, CITY, and COUNTY.}
 
-\item{toollocation}{location of scrubber tool}
+\item{toollocation}{location of scrubber tool. Use the entire path but not the program name ("phiremoval").}
 
-\item{originalconfigdir}{(optional) location of original configuration direcotry provided by Datavant}
+\item{originalconfigdir}{(optional) location of original configuration directory provided by Datavant.  Not needed if it is in the subdirectory as originally provided.}
 
-\item{runscrubber}{Run scrubber after configuration? FALSE by default.}
+\item{runscrubber}{Should this function invoke scrubber after creating configuration files? FALSE by default, in which case the configuration files are created and the scrubber command lines are written to another file.}
 
 \item{verbose}{Amount of output provided to console. 0 (default) for none.  Higher values may provide more.}
 
@@ -47,10 +48,10 @@ scrub(
 \item{listofcolumnnamestoscrub}{which columns in which files to scrub? This argument is a list. Each component is a vector of column names.  The component names are the unique parts of the file names of the files to scrub.  Default value is to include 21 variables from 14 files.}
 }
 \value{
-invisible NULL
+invisible NULL. But several files are created as a side effect and possibly the scrubber is run.
 }
 \description{
-Title
+Create configuration files for and possibly run the Datavant scrubber to scrub free text from select columns of SOURCE files
 }
 \examples{
 ## Not Run
@@ -59,5 +60,7 @@ Title
 ## namesforblacklist = "./black.csv",
 ## toollocation = "./tool",
 ## verbose = 3,
-## listofcolumnsnamestoscrub = list())
+## listofcolumnsnamestoscrub = list(
+##   oph_lab_text = c("LINE_COMMENT", "RESULTS_COMP_CMT", "RESULTS_CMT"),
+##   oph_surgery_text = c("OP_NOTE", "BRIEF_OP_NOTE")))
 }
