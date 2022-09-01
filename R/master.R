@@ -404,19 +404,28 @@ scrub <- function(
   filenames <- rep(NA_character_, nfiles)
 
   for (f in seq.int(nfiles)) {
+    cat(sprintf("%0.2d: %s\n", f, fileroots[f]))
     filename <- grep(fileroots[f], directory, value = TRUE, ignore.case = TRUE)
-    if (length(filename) == 0) {
+    
+    if (length(filename) == 0) { # No match
       warning(sprintf("%s not matched in %s.\n Skipping.", fileroots[f], dirtoscrub))
-    } else if (length(filename) > 1) {
-      warning(sprintf("%s matched %d files in %s.\n", fileroots[f], length(filename), dirtoscrub))
-      print(filename)
-      cat("Skipping.\n")
-    } else {
+    } else if (length(filename) > 1) { # several approximate matches
+      warning(sprintf("%s matched %d files in %s.\nChecking for exact match.", fileroots[f], length(filename), dirtoscrub))
+      # print(filename)
+      filename <- grep(sprintf("%s.csv", fileroots[f]), directory, value = TRUE, ignore.case = TRUE)
+      if (length(filename) != 1) { # no exact match
+        warning(sprintf("%s.csv not matched in %s.\n Skipping.", fileroots[f], dirtoscrub))
+      } else { # exact match
+        warning("Exact match found.")
+        # remove ".csv" extension
+        filenames[f] <- substr(filename, 1, stop = nchar(filename) - 4)
+      }
+    } else { # 1 approximate match
       # remove ".csv" extension
       filenames[f] <- substr(filename, 1, stop = nchar(filename) - 4)
     }
   }
-
+  
   matched <- !is.na(filenames)
   if (isTRUE(all(matched))) {
     if (verbose > 0) {
