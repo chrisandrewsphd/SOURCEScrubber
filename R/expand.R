@@ -48,6 +48,10 @@ expand <- function(
     print(names(patientdata))
     if (verbose > 1) print(st)
   }
+  
+  if (!all(c("PAT_FIRST_NAME", "PAT_MIDDLE_NAME", "PAT_LAST_NAME", "CITY", "COUNTY") %in% names(patientdata))) {
+    stop(sprintf("namesforblacklist (%s) must contain columns named 'PAT_FIRST_NAME', 'PAT_MIDDLE_NAME', 'PAT_LAST_NAME', 'CITY', 'COUNTY'", namesforblacklist))
+  }
 
   # Function to read Datavant databases
   readoriginal <- function(filebase, inconfigdir, verbose = 0, quiet = FALSE) {
@@ -187,11 +191,11 @@ expand <- function(
   # merge phi and datavant data
   white.df <- cleanjoinweed(white, white.datavant$Field, character(0), split=FALSE, verbose = verbose)
 
-  first.df <- cleanjoinweed(patientdata$PAT_FIRST_NAME, first.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
-  middle.df<- cleanjoinweed(patientdata$PAT_MIDDLE_NAME,first.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
-  last.df  <- cleanjoinweed(patientdata$PAT_LAST_NAME ,  last.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
-  city.df  <- cleanjoinweed(patientdata$CITY          ,  city.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
-  county.df<- cleanjoinweed(patientdata$COUNTY        ,county.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
+  first.df <- cleanjoinweed(patientdata[, "PAT_FIRST_NAME" ], first.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
+  middle.df<- cleanjoinweed(patientdata[, "PAT_MIDDLE_NAME"], first.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
+  last.df  <- cleanjoinweed(patientdata[, "PAT_LAST_NAME"  ],  last.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
+  city.df  <- cleanjoinweed(patientdata[, "CITY"           ],  city.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
+  county.df<- cleanjoinweed(patientdata[, "COUNTY"         ],county.datavant$Field, verbose = verbose) #, whitevec=white.df$Field, verbose=3)
 
 
   writenew(white.df , "WhitelistDictionary", outconfigdir=temporaryconfigdir, overwriteifexists = overwriteifexists)
