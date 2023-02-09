@@ -7,7 +7,7 @@ Authors@R:
 Description: Prepares configuration files for processing SOURCE files with Datavant Scrubber. Input includes original configuration directory from Datavant, customized list of names for blacklist, and locations of the Scrubber tool and input/output directories.  Optionally runs Scrubber.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2
 License: MIT + file LICENSE
 Imports: 
     utils
