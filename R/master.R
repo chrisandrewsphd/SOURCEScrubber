@@ -14,6 +14,7 @@
 #' @param runscrubber Should this function invoke scrubber after creating configuration files? FALSE by default, in which case the configuration files are created and the scrubber command lines are written to another file.
 #' @param verbose Amount of output provided to console. 0 (default) for none.  Higher values may provide more.
 #' @param sh_or_bat Choose appropriate script for operating system.  "bat" (default) for Windows. "sh" for Unix-like.
+#' @param digits_in_mrn Number of digits in MRN. Default is 9.
 #' @param listofcolumnnamestoscrub which columns in which files to scrub? This argument is a list. Each component is a vector of column names.  The component names are the unique parts of the file names of the files to scrub.  Default value is to include 21 variables from 14 files.
 #'
 #' @return invisible NULL. But several files are created as a side effect and possibly the scrubber is run.
@@ -38,6 +39,7 @@ scrub <- function(
   runscrubber = FALSE, # Execute system call? or just return scrubber call?
   verbose = 0,
   sh_or_bat = "bat",
+  digits_in_mrn = 9,
   listofcolumnnamestoscrub =
     list(
       oph_order_text = c("ORDER_COMMENT", "NARRATIVE"),
@@ -261,6 +263,7 @@ scrub <- function(
   if (verbose > 0) cat("errorcodes.config updated.\n")
 
   #### regex.config ####
+  # (1)
   # hijack insuranceid line for oldage regular expression
   # extra spaces or hyphens permitted
   oldageregex <- "((9[[:digit:]]|1[[:digit:]]{2})[ -]*(yo\\b|y\\. *o\\.|years?[ -]*old))"
@@ -269,6 +272,12 @@ scrub <- function(
   regcon <- readLines(con = sprintf("%s/Resources/regex.config", genericconfigdir), warn = FALSE)
   insregline <- grep("INSURANCEID", regcon)
   regcon[insregline] <- sprintf("INSURANCEID=%s", oldageregex)
+  # (2)
+  # allow the MRN length to be specified
+  patidregex <- sprintf("(([0-9]{%s})|([0-9]{4}[-][0-9]{4}))", as.character(digits_in_mrn))
+  patidregline <- grep("PATIENTID", regcon)
+  regcon[patidregline] <- sprintf("PATIENTID=%s", patidregex) 
+
   writeLines(regcon, con = sprintf("%s/Resources/regex.config", genericconfigdir))
   if (verbose > 0) cat("regex.config updated.\n")
 
