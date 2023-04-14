@@ -49,10 +49,10 @@ removemrn <- function(
   }
   
   if (verbose > 0) {
-    cat(
+    cat(sprintf(
       "Replacing %d-digit MRNs with %s in %d variables in %d files\n",
       digits_in_mrn, flag,
-      length(unlist(listofcolumnnamestoscrub)), length(listofcolumnnamestoscrub))
+      length(unlist(listofcolumnnamestoscrub)), length(listofcolumnnamestoscrub)))
   }
   
   ###################
@@ -62,7 +62,7 @@ removemrn <- function(
   # Scrubbed files directory
   # this is where the scrubbed output files should be deposited
   if (verbose > 0) {
-    cat(sprintf("Scrubbed data will be written to\n%s\n", dirwithoutmrn))
+    cat(sprintf("Scrubbed data will be written to %s\n", dirwithoutmrn))
   }
   if (dir.exists(dirwithoutmrn)) {
     if (verbose > 0) {
@@ -85,7 +85,7 @@ removemrn <- function(
 
   # This directory contains the datafiles that need to be scrubbed.
   if (verbose > 0) {
-    cat(sprintf("Data to be scrubbed will be read from\n%s\n", dirwithmrn))
+    cat(sprintf("Data to be scrubbed will be read from %s\n", dirwithmrn))
   }
   if (dir.exists(dirwithmrn)) {
     if (verbose > 0) {
@@ -131,9 +131,9 @@ removemrn <- function(
       cat(sprintf("All %d listed file(s) located in %s.\n", sum(matched), dirwithmrn))
       print(filenames)
     } else {
-      cat(sprintf("Only %d listed file(s) located in %s.\n", sum(matched), dirwithmrn))
+      cat(sprintf("Only %d of %d listed file(s) located in %s.\n", sum(matched), length(matched), dirwithmrn))
       print(filenames[matched])
-      cat(sprintf("But  %d listed file(s) not located in %s.\n", sum(!matched), dirwithmrn))
+      cat(sprintf("But  %d of %d listed file(s) not located in %s.\n", sum(!matched), length(matched), dirwithmrn))
       print(fileroots[!matched])
     }
   }
@@ -168,11 +168,11 @@ removemrn <- function(
 
     if (verbose > 0) {
       if (all(!is.na(matched))) {
-        cat(sprintf("All %d variables to scrub found in %s.\n", length(matched), filenames[[f]]))
+        cat(sprintf("All %d variable(s) to scrub found in %s.\n", length(matched), filenames[[f]]))
       } else {
-        cat(sprintf("%d of %d variables to scrub found in %s.\n", sum(!is.na(matched)), length(matched), filenames[[f]]))
+        cat(sprintf("%d of %d variable(s) to scrub found in %s.\n", sum(!is.na(matched)), length(matched), filenames[[f]]))
         print(datvarnames[matched[!is.na(matched)]])
-        cat(sprintf("%d of %d variables to scrub not found in %s.\n", sum(!matched), length(matched), filenames[[f]]))
+        cat(sprintf("%d of %d variable(s) to scrub not found in %s.\n", sum(is.na(matched)), length(matched), filenames[[f]]))
         print(listofcolumnnamestoscrub[[f]][is.na(matched)])
       }
     }
@@ -194,7 +194,7 @@ removemrn <- function(
     # dat <- read.csv(file = infile) # alternative if data.table not available
     
     if (verbose > 0) {
-      cat("%9d rows read from %s.\n", nrow(dat), infile)
+      cat(sprintf("%9d rows read from %s.\n", nrow(dat), infile))
       if (verbose > 1) {
         cat("Before\n")
         print(utils::head(dat))
