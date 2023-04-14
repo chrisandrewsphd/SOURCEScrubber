@@ -1,6 +1,6 @@
 Package: SOURCEScrubber
 Title: Prepares configuration files for processing SOURCE files with Datavant Scrubber
-Version: 0.3
+Version: 0.4
 Authors@R: 
     person("Chris", "Andrews", , "chrisaa@umich.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5130-6374"))
@@ -10,4 +10,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 License: MIT + file LICENSE
 Imports: 
-    utils
+    utils,
+    data.table
