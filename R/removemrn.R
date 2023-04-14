@@ -6,6 +6,7 @@
 #' @param digits_in_mrn Number of digits in MRN. Default is 9.
 #' @param flag Character string to replace found MRNs. Default is "XXX-MRNMRN".
 #' @param perllike Should perl regex engine (PCRE) be used (TRUE, default) or TRE (FALSE).
+#' @param case_sensitive Should variable names be found sensitive to case (TRUE, default) or insensitive to case (FALSE).
 #' @param listofcolumnnamestoscrub which columns in which files to scrub? This argument is a list. Each component is a vector of column names.  The component names are the unique parts of the file names of the files to scrub.  Default value is to include 22 variables from 14 files.
 #'
 #' @return invisible NULL. But several files are created as a side effect.
@@ -17,6 +18,7 @@ removemrn <- function(
     digits_in_mrn = 9,
     flag = "XXX-MRNMRN",
     perllike = TRUE,
+    case_sensitive = TRUE,
     listofcolumnnamestoscrub =
       list(
         OPH_ORDER_text = c("ORDER_COMMENT", "NARRATIVE"),
@@ -103,16 +105,16 @@ removemrn <- function(
   filenames <- rep(NA_character_, nfiles)
   
   for (f in seq.int(nfiles)) {
-    cat(sprintf("%0.2d: %s\n", f, fileroots[f]))
+    cat(sprintf("file %2d: %s\n", f, fileroots[f]))
     filename <- grep(fileroots[f], directory, value = TRUE, ignore.case = TRUE)
     
     if (length(filename) == 0) { # No match
-      if (verbose > 0) cat(sprintf("%s not matched in %s.\n Skipping.\n", fileroots[f], dirwithmrn))
+      if (verbose > 0) cat(sprintf("%s not matched in directory '%s'.\n Skipping.\n", fileroots[f], dirwithmrn))
     } else if (length(filename) > 1) { # several approximate matches
-      if (verbose > 0) cat(sprintf("%s matched %d files in %s.\nChecking for exact match.\n", fileroots[f], length(filename), dirwithmrn))
+      if (verbose > 0) cat(sprintf("%s matched %d files in directory '%s'.\nChecking for exact match.\n", fileroots[f], length(filename), dirwithmrn))
       filename <- grep(sprintf("%s.csv", fileroots[f]), directory, value = TRUE, ignore.case = TRUE)
       if (length(filename) != 1) { # no exact match
-        if (verbose > 0) cat(sprintf("%s.csv not matched in %s.\n Skipping.\n", fileroots[f], dirwithmrn))
+        if (verbose > 0) cat(sprintf("%s.csv not matched in directory '%s'.\n Skipping.\n", fileroots[f], dirwithmrn))
       } else { # exact match
         if (verbose > 0) cat("Exact match found.\n")
         # remove ".csv" extension
@@ -128,12 +130,12 @@ removemrn <- function(
   
   if (verbose > 0) {
     if (isTRUE(all(matched))) {
-      cat(sprintf("All %d listed file(s) located in %s.\n", sum(matched), dirwithmrn))
+      cat(sprintf("All %d listed file(s) located in directory '%s'.\n", sum(matched), dirwithmrn))
       print(filenames)
     } else {
-      cat(sprintf("Only %d of %d listed file(s) located in %s.\n", sum(matched), length(matched), dirwithmrn))
+      cat(sprintf("Only %d of %d listed file(s) located in directory '%s'.\n", sum(matched), length(matched), dirwithmrn))
       print(filenames[matched])
-      cat(sprintf("But  %d of %d listed file(s) not located in %s.\n", sum(!matched), length(matched), dirwithmrn))
+      cat(sprintf("But  %d of %d listed file(s) not located in directory '%s'.\n", sum(!matched), length(matched), dirwithmrn))
       print(fileroots[!matched])
     }
   }
@@ -146,12 +148,12 @@ removemrn <- function(
   for (f in seq.int(nfiles)) {
     if (is.na(filenames[f])) {
       if (verbose > 0) {
-        cat(sprintf("Skipping %s\n", fileroots[f]))
+        cat(sprintf("Skipping unfound file %s\n", fileroots[f]))
       }
       next
     }
     if (verbose > 0) {
-      cat(sprintf("Searching variable names of %s (%s)\n", filenames[f], fileroots[f]))
+      cat(sprintf("Reading variable names of %s (%s)\n", filenames[f], fileroots[f]))
     }
     datvarnames <- names(data.table::fread(
       sprintf("%s/%s.csv", dirwithmrn, filenames[f]),
@@ -164,7 +166,11 @@ removemrn <- function(
       print(listofcolumnnamestoscrub[[f]])
     }
 
-    matched <- match(toupper(listofcolumnnamestoscrub[[f]]), toupper(datvarnames))
+    matched <- if (isTRUE(case_sensitive)) {
+      match(listofcolumnnamestoscrub[[f]], datvarnames)
+    } else if (isFALSE(case_sensitive)) {
+      match(toupper(listofcolumnnamestoscrub[[f]]), toupper(datvarnames))
+    } else stop("case_sensitive must be TRUE or FALSE")
 
     if (verbose > 0) {
       if (all(!is.na(matched))) {

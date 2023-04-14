@@ -11,6 +11,7 @@ removemrn(
   digits_in_mrn = 9,
   flag = "XXX-MRNMRN",
   perllike = TRUE,
+  case_sensitive = TRUE,
   listofcolumnnamestoscrub = list(OPH_ORDER_text = c("ORDER_COMMENT", "NARRATIVE"),
     OPH_SURGERY_text = c("OP_NOTE", "BRIEF_OP_NOTE"), OPH_ENC_PROBLEM_LIST_text =
     c("PROBLEM_CMT"), OPH_ENC_HPI_text = c("HPI_COMMENT"), OPH_ENC_VISIT_SUMMARY_text =
@@ -35,6 +36,8 @@ removemrn(
 \item{flag}{Character string to replace found MRNs. Default is "XXX-MRNMRN".}
 
 \item{perllike}{Should perl regex engine (PCRE) be used (TRUE, default) or TRE (FALSE).}
+
+\item{case_sensitive}{Should variable names be found sensitive to case (TRUE, default) or insensitive to case (FALSE).}
 
 \item{listofcolumnnamestoscrub}{which columns in which files to scrub? This argument is a list. Each component is a vector of column names.  The component names are the unique parts of the file names of the files to scrub.  Default value is to include 22 variables from 14 files.}
 }
