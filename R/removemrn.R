@@ -47,12 +47,12 @@ removemrn <- function(
     # (using Extended Regular Expressions)
     sprintf("(^|[^[:digit:]])[[:digit:]]{%s}([^[:digit:]]|$)", as.character(digits_in_mrn))
   } else {
-    stop("perllike must be TRUE or FALSE")
+    stop("'perllike' must be TRUE or FALSE")
   }
   
   if (verbose > 0) {
     cat(sprintf(
-      "Replacing %d-digit MRNs with %s in %d variables in %d files\n",
+      "Replacing %d-digit MRNs with '%s' in %d variables in %d files\n",
       digits_in_mrn, flag,
       length(unlist(listofcolumnnamestoscrub)), length(listofcolumnnamestoscrub)))
   }
@@ -64,7 +64,7 @@ removemrn <- function(
   # Scrubbed files directory
   # this is where the scrubbed output files should be deposited
   if (verbose > 0) {
-    cat(sprintf("Scrubbed data will be written to %s\n", dirwithoutmrn))
+    cat(sprintf("Scrubbed data will be written to directory '%s'.\n", dirwithoutmrn))
   }
   if (dir.exists(dirwithoutmrn)) {
     if (verbose > 0) {
@@ -87,7 +87,7 @@ removemrn <- function(
 
   # This directory contains the datafiles that need to be scrubbed.
   if (verbose > 0) {
-    cat(sprintf("Data to be scrubbed will be read from %s\n", dirwithmrn))
+    cat(sprintf("Data to be scrubbed will be read from directory '%s'.\n", dirwithmrn))
   }
   if (dir.exists(dirwithmrn)) {
     if (verbose > 0) {
@@ -95,7 +95,7 @@ removemrn <- function(
       print(dir(dirwithmrn))
     }
   } else {
-    stop(sprintf("%s does not exist.", dirwithmrn))
+    stop(sprintf("'%s' does not exist.", dirwithmrn))
   }
   
   # link scrubbing request to files in directory
@@ -105,16 +105,16 @@ removemrn <- function(
   filenames <- rep(NA_character_, nfiles)
   
   for (f in seq.int(nfiles)) {
-    cat(sprintf("file %2d: %s\n", f, fileroots[f]))
+    if (verbose > 0) cat(sprintf("file %2d: '%s'\n", f, fileroots[f]))
     filename <- grep(fileroots[f], directory, value = TRUE, ignore.case = TRUE)
     
     if (length(filename) == 0) { # No match
-      if (verbose > 0) cat(sprintf("%s not matched in directory '%s'.\n Skipping.\n", fileroots[f], dirwithmrn))
+      if (verbose > 0) cat(sprintf("'%s' not matched in directory '%s'.\n Skipping.\n", fileroots[f], dirwithmrn))
     } else if (length(filename) > 1) { # several approximate matches
-      if (verbose > 0) cat(sprintf("%s matched %d files in directory '%s'.\nChecking for exact match.\n", fileroots[f], length(filename), dirwithmrn))
+      if (verbose > 0) cat(sprintf("'%s' matched %d files in directory '%s'.\nChecking for exact match.\n", fileroots[f], length(filename), dirwithmrn))
       filename <- grep(sprintf("%s.csv", fileroots[f]), directory, value = TRUE, ignore.case = TRUE)
       if (length(filename) != 1) { # no exact match
-        if (verbose > 0) cat(sprintf("%s.csv not matched in directory '%s'.\n Skipping.\n", fileroots[f], dirwithmrn))
+        if (verbose > 0) cat(sprintf("'%s.csv' not matched in directory '%s'.\n Skipping.\n", fileroots[f], dirwithmrn))
       } else { # exact match
         if (verbose > 0) cat("Exact match found.\n")
         # remove ".csv" extension
@@ -148,12 +148,12 @@ removemrn <- function(
   for (f in seq.int(nfiles)) {
     if (is.na(filenames[f])) {
       if (verbose > 0) {
-        cat(sprintf("Skipping unfound file %s\n", fileroots[f]))
+        cat(sprintf("Skipping unfound file '%s'\n", fileroots[f]))
       }
       next
     }
     if (verbose > 0) {
-      cat(sprintf("Reading variable names of %s (%s)\n", filenames[f], fileroots[f]))
+      cat(sprintf("Reading variable names of '%s' ('%s')\n", filenames[f], fileroots[f]))
     }
     datvarnames <- names(data.table::fread(
       sprintf("%s/%s.csv", dirwithmrn, filenames[f]),
@@ -162,7 +162,7 @@ removemrn <- function(
     if (verbose > 0) {
       cat(sprintf("Variable names in file:\n"))
       print(datvarnames)
-      cat(sprintf("Searching for\n"))
+      cat(sprintf("Searching for variables:\n"))
       print(listofcolumnnamestoscrub[[f]])
     }
 
@@ -170,15 +170,15 @@ removemrn <- function(
       match(listofcolumnnamestoscrub[[f]], datvarnames)
     } else if (isFALSE(case_sensitive)) {
       match(toupper(listofcolumnnamestoscrub[[f]]), toupper(datvarnames))
-    } else stop("case_sensitive must be TRUE or FALSE")
+    } else stop("'case_sensitive' must be TRUE or FALSE")
 
     if (verbose > 0) {
       if (all(!is.na(matched))) {
-        cat(sprintf("All %d variable(s) to scrub found in %s.\n", length(matched), filenames[[f]]))
+        cat(sprintf("All %d variable(s) to scrub found in file '%s'.\n", length(matched), filenames[[f]]))
       } else {
-        cat(sprintf("%d of %d variable(s) to scrub found in %s.\n", sum(!is.na(matched)), length(matched), filenames[[f]]))
+        cat(sprintf("%d of %d variable(s) to scrub found in file '%s'.\n", sum(!is.na(matched)), length(matched), filenames[[f]]))
         print(datvarnames[matched[!is.na(matched)]])
-        cat(sprintf("%d of %d variable(s) to scrub not found in %s.\n", sum(is.na(matched)), length(matched), filenames[[f]]))
+        cat(sprintf("%d of %d variable(s) to scrub not found in file '%s'.\n", sum(is.na(matched)), length(matched), filenames[[f]]))
         print(listofcolumnnamestoscrub[[f]][is.na(matched)])
       }
     }
@@ -200,7 +200,7 @@ removemrn <- function(
     # dat <- read.csv(file = infile) # alternative if data.table not available
     
     if (verbose > 0) {
-      cat(sprintf("%9d rows read from %s.\n", nrow(dat), infile))
+      cat(sprintf("%9d rows read from file '%s'.\n", nrow(dat), infile))
       if (verbose > 1) {
         cat("Before\n")
         print(utils::head(dat))
@@ -208,16 +208,12 @@ removemrn <- function(
     }
 
     for (varname in listofcolumnnamestoscrub[[i]]) {
-      if (varname %in% names(dat)) {
-        dat[[varname]] <- if (isTRUE(perllike)) {
-          # (using Perl-like Regular Expressions)
-          gsub(regex, flag, dat[[varname]], perl = TRUE)
-        } else {
-          # (using Extended Regular Expressions)
-          gsub(regex, sprintf("\\1%s\\2", flag), dat[[varname]])
-        }
+      dat[[varname]] <- if (isTRUE(perllike)) {
+        # (using Perl-like Regular Expressions)
+        gsub(regex, flag, dat[[varname]], perl = TRUE)
       } else {
-        warning(sprintf("%s not a variable name in %s. SKIPPING.", varname, infile))
+        # (using Extended Regular Expressions)
+        gsub(regex, sprintf("\\1%s\\2", flag), dat[[varname]])
       }
     }
     
