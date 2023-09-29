@@ -11,6 +11,8 @@
 #' @param namesforblacklist full path and file name of custom file containing blacklist values.  This csv file should have five columns: PAT_FIRST_NAME, PAT_MIDDLE_NAME, PAT_LAST_NAME, CITY, and COUNTY.
 #' @param toollocation location of scrubber tool. Use the entire path but not the program name ("phiremoval").
 #' @param originalconfigdir (optional) location of original configuration directory provided by Datavant.  Not needed if it is in the subdirectory as originally provided.
+#' @param termsforwhitelist Location of user-provided whitelist. text file that contains a single column of terms to be included in the whitelist. Variable name (first row) should be "WHITELIST".
+#' @param deletewhitefromblack Should the terms in the whitelist be removed from the blacklists? Default is `FALSE` to match previous behavior. Might change to `TRUE` in the future. However, Scrubber may do this already.
 #' @param runscrubber Should this function invoke scrubber after creating configuration files? FALSE by default, in which case the configuration files are created and the scrubber command lines are written to another file.
 #' @param verbose Amount of output provided to console. 0 (default) for none.  Higher values may provide more.
 #' @param sh_or_bat Choose appropriate script for operating system.  "bat" (default) for Windows. "sh" for Unix-like.
@@ -36,6 +38,8 @@ scrub <- function(
   namesforblacklist, # full path, or relative to dirtoscrub?
   toollocation, # location of scrubber tool
   originalconfigdir = sprintf("%s/UOMPHIRemoval", toollocation),
+  termsforwhitelist = NULL, # Location of user-provided whitelist
+  deletewhitefromblack = FALSE, # should whitelist terms be removed from blacklists?
   runscrubber = FALSE, # Execute system call? or just return scrubber call?
   verbose = 0,
   sh_or_bat = "bat",
@@ -231,6 +235,8 @@ scrub <- function(
     namesforblacklist = namesforblacklist,
     originalconfigdir = originalconfigdir,
     temporaryconfigdir = genericconfigdir,
+    termsforwhitelist = termsforwhitelist,
+    deletewhitefromblack = deletewhitefromblack,
     verbose = verbose,
     overwriteifexists = TRUE
   )

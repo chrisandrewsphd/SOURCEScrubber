@@ -8,6 +8,8 @@ expand(
   namesforblacklist,
   originalconfigdir,
   temporaryconfigdir,
+  termsforwhitelist = NULL,
+  deletewhitefromblack = FALSE,
   verbose = 0,
   overwriteifexists = FALSE
 )
@@ -18,6 +20,10 @@ expand(
 \item{originalconfigdir}{Location of the Datavant scrubber configuration directory}
 
 \item{temporaryconfigdir}{Location to store expanded databases adapted to the file to be scrubbed.}
+
+\item{termsforwhitelist}{Location of user-provided whitelist. text file that contains a single column of terms to be included in the whitelist. Variable name (first row) should be "WHITELIST".}
+
+\item{deletewhitefromblack}{Should the terms in the whitelist be removed from the blacklists? Default is \code{FALSE} to match previous behavior. Might change to \code{TRUE} in the future. However, Scrubber may do this already.}
 
 \item{verbose}{How much should be printed to the console? 0 (default) for none.  Higher values potentially display more}
 

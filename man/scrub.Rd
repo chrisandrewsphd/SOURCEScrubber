@@ -11,6 +11,8 @@ scrub(
   namesforblacklist,
   toollocation,
   originalconfigdir = sprintf("\%s/UOMPHIRemoval", toollocation),
+  termsforwhitelist = NULL,
+  deletewhitefromblack = FALSE,
   runscrubber = FALSE,
   verbose = 0,
   sh_or_bat = "bat",
@@ -39,6 +41,10 @@ scrub(
 \item{toollocation}{location of scrubber tool. Use the entire path but not the program name ("phiremoval").}
 
 \item{originalconfigdir}{(optional) location of original configuration directory provided by Datavant.  Not needed if it is in the subdirectory as originally provided.}
+
+\item{termsforwhitelist}{Location of user-provided whitelist. text file that contains a single column of terms to be included in the whitelist. Variable name (first row) should be "WHITELIST".}
+
+\item{deletewhitefromblack}{Should the terms in the whitelist be removed from the blacklists? Default is \code{FALSE} to match previous behavior. Might change to \code{TRUE} in the future. However, Scrubber may do this already.}
 
 \item{runscrubber}{Should this function invoke scrubber after creating configuration files? FALSE by default, in which case the configuration files are created and the scrubber command lines are written to another file.}
 
